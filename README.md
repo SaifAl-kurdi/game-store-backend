@@ -29,33 +29,6 @@ All technologies used by this project are free and open source.
 - Swagger/OpenAPI documentation
 - Django Admin support for products and orders
 
-## Project Structure
-
-```text
-game-store-backend/
-|-- config/                         # Django project configuration
-|   |-- settings.py
-|   |-- urls.py
-|   |-- asgi.py
-|   `-- wsgi.py
-|-- store/                          # Products and orders application
-|   |-- management/
-|   |   `-- commands/
-|   |       `-- import_products.py
-|   |-- migrations/
-|   |-- admin.py
-|   |-- apps.py
-|   |-- models.py
-|   |-- serializers.py
-|   |-- urls.py
-|   `-- views.py
-|-- .env.example
-|-- .gitignore
-|-- items.csv
-|-- manage.py
-`-- requirements.txt
-```
-
 ## Database Design
 
 ### Product
