@@ -10,9 +10,6 @@ A RESTful backend for managing digital game products and purchases. The applicat
 - PostgreSQL 18
 - Simple JWT
 - drf-spectacular (OpenAPI and Swagger UI)
-- psycopg
-
-All technologies used by this project are free and open source.
 
 ## Features
 
@@ -22,12 +19,10 @@ All technologies used by this project are free and open source.
 - Optional product filtering by location (`JO` or `SA`)
 - Product details
 - Purchase flow for one product per request
-- Persistent order records and generated receipt numbers
 - Receipt retrieval restricted to the user who created the order
 - CSV product import with validation and transaction rollback
 - PostgreSQL database integration
 - Swagger/OpenAPI documentation
-- Django Admin support for products and orders
 
 ## Database Design
 
@@ -61,134 +56,15 @@ The order stores a snapshot of the product title, location, and price. Therefore
 
 PostgreSQL was selected because it is a reliable open-source relational database with strong transaction support, constraints, indexing, and Django integration. Relational tables and foreign keys are a natural fit for users, products, and orders. Transactions are particularly useful for ensuring an incomplete purchase or invalid CSV import does not leave partial data in the database.
 
-## Prerequisites
+## Design Decisions and Assumptions
 
-Install the following:
-
-- Python 3.14 or a compatible Python version
-- PostgreSQL
-- Git
-
-## Local Setup
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/YOUR_USERNAME/game-store-backend.git
-cd game-store-backend
-```
-
-Replace `YOUR_USERNAME` with the repository owner's GitHub username.
-
-### 2. Create a virtual environment
-
-Windows PowerShell:
-
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-```
-
-Windows Command Prompt:
-
-```cmd
-python -m venv .venv
-.venv\Scripts\activate.bat
-```
-
-macOS/Linux:
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-```
-
-### 3. Install dependencies
-
-```bash
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
-```
-
-### 4. Create the PostgreSQL database
-
-The following example uses PostgreSQL's default local administrator. A dedicated application user is recommended outside a local development environment.
-
-```sql
-CREATE DATABASE game_store_db;
-```
-
-### 5. Configure environment variables
-
-Copy `.env.example` to `.env` and enter your local values:
-
-```env
-DJANGO_SECRET_KEY=replace-with-a-secure-random-value
-DJANGO_DEBUG=True
-DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
-
-DB_NAME=game_store_db
-DB_USER=postgres
-DB_PASSWORD=replace-with-your-postgresql-password
-DB_HOST=localhost
-DB_PORT=5432
-```
-
-Generate a development secret key with:
-
-```bash
-python -c "import secrets; print(secrets.token_urlsafe(50))"
-```
-
-Never commit `.env`. It is excluded through `.gitignore`.
-
-### 6. Apply migrations
-
-```bash
-python manage.py migrate
-```
-
-### 7. Import products
-
-The included CSV has these columns:
-
-```text
-id,title,description,price,location
-```
-
-Import it with:
-
-```bash
-python manage.py import_products items.csv
-```
-
-The importer validates required columns, IDs, prices, mandatory text, duplicate IDs, and supported locations. Re-importing updates products with matching IDs. The import runs inside one database transaction and rolls back if a row is invalid.
-
-### 8. Create a user
-
-```bash
-python manage.py createsuperuser
-```
-
-Follow the prompts to create credentials for login and Django Admin.
-
-### 9. Run the development server
-
-```bash
-python manage.py runserver
-```
-
-The application runs at:
-
-```text
-http://127.0.0.1:8000/
-```
-
-## API Documentation
-
-- Swagger UI: `http://127.0.0.1:8000/api/docs/`
-- OpenAPI schema: `http://127.0.0.1:8000/api/schema/`
-- Django Admin: `http://127.0.0.1:8000/admin/`
+- React Context manages authentication state.
+- Axios provides a shared API client and adds the JWT access token to requests.
+- Session storage keeps authentication active for the current browser tab.
+- React Router protects pages and redirects unauthenticated users.
+- Parcel is used as the React build tool.
+- The frontend assumes the Django API is available at the configured
+  API_BASE_URL.
 
 ## Authentication
 
@@ -329,27 +205,6 @@ Common status codes include:
 | `401 Unauthorized` | Missing, expired, or invalid JWT |
 | `404 Not Found` | Product or accessible receipt not found |
 
-## Useful Commands
-
-```bash
-# Validate Django configuration
-python manage.py check
-
-# Detect model changes
-python manage.py makemigrations
-
-# Apply database migrations
-python manage.py migrate
-
-# Import or update CSV products
-python manage.py import_products items.csv
-
-# Create an administrator
-python manage.py createsuperuser
-
-# Start the development server
-python manage.py runserver
-```
 
 ## Security Notes
 
@@ -365,6 +220,7 @@ python manage.py runserver
 
 The backend implements the API and database portion of the technical assignment. The React frontend is maintained as a separate project/module and will consume these endpoints.
 
-## License
 
-This project was created as a technical assignment. No license has been specified.
+## Author
+
+Saif Al-Kurdi
