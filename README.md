@@ -66,6 +66,125 @@ PostgreSQL was selected because it is a reliable open-source relational database
 - The frontend assumes the Django API is available at the configured
   API_BASE_URL.
 
+## Local Setup
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/YOUR_USERNAME/game-store-backend.git
+cd game-store-backend
+```
+
+Replace `YOUR_USERNAME` with the repository owner's GitHub username.
+
+### 2. Create a virtual environment
+
+Windows PowerShell:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+Windows Command Prompt:
+
+```cmd
+python -m venv .venv
+.venv\Scripts\activate.bat
+```
+
+macOS/Linux:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+### 3. Install dependencies
+
+```bash
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+```
+
+### 4. Create the PostgreSQL database
+
+The following example uses PostgreSQL's default local administrator. A dedicated application user is recommended outside a local development environment.
+
+```sql
+CREATE DATABASE game_store_db;
+```
+
+### 5. Configure environment variables
+
+Copy `.env.example` to `.env` and enter your local values:
+
+```env
+DJANGO_SECRET_KEY=replace-with-a-secure-random-value
+DJANGO_DEBUG=True
+DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
+
+DB_NAME=game_store_db
+DB_USER=postgres
+DB_PASSWORD=
+DB_HOST=localhost
+DB_PORT=5432
+```
+
+Generate a development secret key with:
+
+```bash
+python -c "import secrets; print(secrets.token_urlsafe(50))"
+```
+
+### 6. Apply migrations
+
+```bash
+python manage.py migrate
+```
+
+### 7. Import products
+
+The included CSV has these columns:
+
+```text
+id,title,description,price,location
+```
+
+Import it with:
+
+```bash
+python manage.py import_products items.csv
+```
+
+The importer validates required columns, IDs, prices, mandatory text, duplicate IDs, and supported locations. Re-importing updates products with matching IDs. The import runs inside one database transaction and rolls back if a row is invalid.
+
+### 8. Create a user
+
+```bash
+python manage.py createsuperuser
+```
+
+Follow the prompts to create credentials for login and Django Admin.
+
+### 9. Run the development server
+
+```bash
+python manage.py runserver
+```
+
+The application runs at:
+
+```text
+http://127.0.0.1:8000/
+```
+
+## API Documentation
+
+- Swagger UI: `http://127.0.0.1:8000/api/docs/`
+- OpenAPI schema: `http://127.0.0.1:8000/api/schema/`
+- Django Admin: `http://127.0.0.1:8000/admin/`
+
 ## Authentication
 
 ### Login
